@@ -2,18 +2,11 @@
 import { reactive, onMounted } from 'vue';
 import { enhanceForm } from './enhance.js';
 
-/**
- * Enhance form
- * Enhance input validation
- * Enhance fetch
- * Convert to Vue handlers (avoid memory leaks)
- */
-
 const API_ENDPOINT = '';
-// const API_ENDPOINT = 'http://localhost:3001';
 // const API_ENDPOINT = 'https://jsonplaceholder.typicode.com/todos/';
 // const API_ENDPOINT = 'https://httpstat.us/400';
 // const API_ENDPOINT = 'https://httpstat.us/301';
+// const API_ENDPOINT = 'http://localhost:3001';
 
 const state = reactive({
   js: true,
@@ -28,15 +21,29 @@ onMounted(() => {
 
 <template>
   <main :class="state.js ? 'js' : 'no-js'">
+    <!-- 
+    Click Example
+    Search Example
+    The perfect input
+    Non-JS Examples
+    Enhance form
+    Enhance input validation
+    Client vs server validation
+    Enhance fetch
+    Nested data structures
+    Convert to Vue handlers (avoid memory leaks)
+    Enhance server 
+    -->
     <button @click="state.js = !state.js">
       Toggle JS class ({{ state.js ? '.js' : '.no-js' }})
     </button>
     <br />
+
     <form :action="API_ENDPOINT">
-      <div class="control">
+      <!-- <div class="control">
         <label for="name">Name</label>
         <div class="control__input">
-          <input id="name" type="text" name="name" required />
+          <input id="name" name="name" required />
         </div>
       </div>
       <div class="control">
@@ -57,7 +64,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <br />
+      <br /> -->
 
       <fieldset>
         <legend>What's your fave frontend language</legend>

@@ -38,6 +38,7 @@ module.exports = {
       'error',
       { definedTypes: ['Record', 'Pick', 'T', 'NodeListOf', 'SubmitEvent'] },
     ],
+    'jsdoc/require-jsdoc': 'off',
     'jsdoc/require-param-description': 'off',
     'jsdoc/require-returns': 'off',
     'jsdoc/valid-types': 'off',

@@ -1,25 +1,60 @@
-import path from 'node:path';
 import Fastify from 'fastify';
-import FastifyStatic from '@fastify/static';
+import FastifyCors from '@fastify/cors';
 import FastifyFormbody from '@fastify/formbody';
 import FastifyMultipart from '@fastify/multipart';
-import FastifyView from '@fastify/view'
-import ejs from 'ejs'
+import FastifyCookie from '@fastify/cookie';
+import { z } from 'zod';
 
-const fastify = Fastify({ logger: true });
-fastify.register(FastifyView, {
-  engine: { ejs: ejs },
-});
-fastify.register(FastifyStatic, {
-  root: path.dirname(new URL(import.meta.url).pathname) // __dirname
+/**
+ * Request body
+ * Multipart/form-data
+ * Validation
+ * Validation errors as cookie
+ * JSON vs HTML response
+ * Handling other http methods
+ */
+
+const fastify = Fastify({ logger: false });
+fastify.register(FastifyCors, {
+  origin: 'http://localhost:3000',
+  credentials: true,
 });
 fastify.register(FastifyFormbody);
 fastify.register(FastifyMultipart, { addToBody: true });
+fastify.register(FastifyCookie);
 
-fastify.get('/', async (request, reply) => {
-  return reply.view('/src/index.ejs');
-});
-fastify.all('/api', async (request, reply) => {
+fastify.all('/', async (request, reply) => {
+  const headers = request.headers;
+  const returnJson =
+    headers['sec-fetch-mode'] !== 'navigation' || // Sent by browser
+    headers.accept?.includes('application/json') || // Fetch requesting JSON
+    headers['x-custom-fetch'] || // Fetch using custom header
+    headers['content-type'].includes('application/json'); // Fetch sent JSON
+
+  try {
+    const schema = z.object({
+      t: z.literal(true),
+      f: z.literal(false),
+    });
+    const body = schema.parse({
+      t: false,
+      f: true,
+    });
+  } catch (error) {
+    const data = {};
+    for (const issue of error.issues) {
+      data[issue.path[0]] = issue.message;
+    }
+    if (returnJson) {
+      return reply.status(400).send(data);
+    }
+    return reply.redirect(400, headers.referer);
+  }
+
+  if (returnJson) {
+    return reply.send({ hello: 'world' });
+  }
+  return reply.redirect(303, headers.referer);
 });
 
 const start = async () => {

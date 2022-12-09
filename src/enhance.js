@@ -190,7 +190,9 @@ export function enhancedFetch(url, init = {}) {
 
       resolve(response);
     } catch (error) {
-      reject(error);
+      if (error.name !== 'AbortError') {
+        reject(error);
+      }
     }
   });
 
@@ -224,7 +226,6 @@ export function enhanceForm(form, options = {}) {
    * noValidate, checkValidity & reportValidity
    * Custom input validation UI
    * Focus/scroll management (w/o aria live regions)
-   * Handling nested form data
    * Prevent page navigation
    * Store in sessionStorage
    * Prevent spamming submit button
@@ -262,7 +263,7 @@ export function enhanceForm(form, options = {}) {
     }
 
     if (form._pendingRequest) {
-      form._pendingRequest.abort();
+      form._pendingRequest?.abort && form._pendingRequest.abort();
     }
 
     /** @type {HTMLFormElement} */
@@ -271,6 +272,7 @@ export function enhanceForm(form, options = {}) {
     const searchParameters = new URLSearchParams(formData);
     const options = {
       method: form.method,
+      credentials: 'include',
     };
 
     if (options.method.toUpperCase() === 'GET') {

@@ -19,18 +19,19 @@
     "vite-plugin-handlebars": "^1.6.0"
   },
   "dependencies": {
+    "@fastify/cookie": "^8.3.0",
+    "@fastify/cors": "^8.2.0",
     "@fastify/formbody": "^7.3.0",
     "@fastify/multipart": "^7.3.0",
-    "@fastify/static": "^6.5.1",
-    "@fastify/view": "^7.3.0",
     "@fontsource/manrope": "^4.5.12",
     "concurrently": "^7.6.0",
-    "ejs": "^3.1.8",
     "fastify": "^4.10.2",
     "fastify-formbody": "^5.3.0",
     "fastify-multipart": "^5.4.0",
     "fastify-static": "^4.7.0",
+    "qs": "^6.11.0",
     "vite-plugin-pug-transformer": "^1.0.2",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "zod": "^3.19.1"
   }
 }
