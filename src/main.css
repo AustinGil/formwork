@@ -118,9 +118,9 @@ button {
 }
 .control__input:has(:focus-visible),
 .control :where([type="radio"], [type="checkbox"]):focus-visible,
-#html:focus-visible + .card,
-#css:focus-visible + .card,
-#js:focus-visible + .card {
+.card:has(:focus-visible),
+.card:has(:focus-visible),
+.card:has(:focus-visible) {
   outline: 3px solid var(--outline);
   outline-offset: 1px;
 }
@@ -215,9 +215,6 @@ input[type="checkbox"].switch:checked:before {
   display: block;
   margin-left: auto;
   margin-right: auto;
-}
-.card:has(input:focus) {
-  box-shadow: 0 0 0 .25rem var(--outline);
 }
 .card:has(input:checked) {
   box-shadow: inset 0 0 0 .25em var(--highlight);
