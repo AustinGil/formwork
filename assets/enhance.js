@@ -83,15 +83,20 @@ export function enhanceInput(input) {
 }
 
 class FetchError extends Error {
+  /**
+   * @param {ConstructorParameters<ErrorConstructor>[0]} message
+   * @param {ConstructorParameters<ErrorConstructor>[1]} options
+   */
   constructor(message, options) {
     super(message, options);
     this.name = 'FetchError';
   }
 }
+
 class LazyPromise extends Promise {
+  /** @param {ConstructorParameters<PromiseConstructor>[0]} fn */
   constructor(fn) {
-    // eslint-disable-next-line prettier/prettier
-    super(() => { });
+    super(fn);
     if (typeof fn !== 'function') {
       throw new TypeError(`Promise resolver is not a function`);
     }
@@ -119,9 +124,9 @@ export function enhancedFetch(url, init = {}) {
   /**
    * Put data on response object
    * Errors on bad requests
-   * Abortable
    * Retries
    * Timeout
+   * Abortable
    * Lazy execution
    * Challenge: How to handle 3XX status codes?
    * Challenge: Resumable on network reconnect (navigator.onLine)
@@ -216,7 +221,7 @@ function onBeforeUnload(event) {
 /**
  * @param {HTMLFormElement} form
  * @param {{
- * preventNav: boolean
+ * preventNav?: boolean
  * }} [options]
  */
 export function enhanceForm(form, options = {}) {
@@ -226,10 +231,11 @@ export function enhanceForm(form, options = {}) {
    * noValidate, checkValidity & reportValidity
    * Custom input validation UI
    * Focus/scroll management (w/o aria live regions)
+   * Validate inputs on input/blur
    * Prevent page navigation
-   * Store in sessionStorage
-   * Prevent spamming submit button
    * Enhanced fetch
+   * Prevent spamming submit button
+   * Challenge: Store in sessionStorage
    */
 
   if (options.preventNav) {
