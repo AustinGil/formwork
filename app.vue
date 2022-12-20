@@ -14,20 +14,7 @@ onMounted(() => {
 
 <template>
   <main>
-    <!-- 
-    Click Example
-    Search Example
-    The perfect input
-    Non-JS Examples
-    Enhance form
-    Enhance input validation
-    Client vs server validation
-    Enhance fetch
-    Nested data structures
-    Convert to Vue handlers (avoid memory leaks)
-    Create components
-    Enhance server 
-    -->
+    <!--  -->
   </main>
 </template>
 
