@@ -8,15 +8,20 @@ const FORM_CONTROLS = 'input,select,textarea';
  * @param {HTMLInputElement} input
  */
 function validateInput(input) {
-  const { validity } = input;
-  if (validity.valid) return;
-
   input.id = input.id || Math.random().toString(36).slice(2);
   const id = input.id;
+  const errorId = `${id}__errors`;
+  const { validity } = input;
+  const errorContainer =
+    document.getElementById(errorId) || document.createElement('div');
 
+  if (validity.valid) {
+    errorContainer.remove();
+    return;
+  }
+
+  errorContainer.id = errorId;
   input.ariaInvalid = 'true';
-  const errorContainer = document.createElement('div');
-  errorContainer.id = `${id}__errors`;
   let descriptors = input.getAttribute('aria-describedby');
   if (descriptors) {
     descriptors = descriptors.split(' ');
@@ -29,6 +34,9 @@ function validateInput(input) {
   if (validity.valueMissing) {
     errors.push('This field is required.');
   }
+  if (validity.tooShort) {
+    errors.push(`This field must be at least ${input.minLength} characters.`);
+  }
   if (errors.length) {
     errorContainer.innerHTML = errors.join(' ');
     input.parentElement?.after(errorContainer);
@@ -40,6 +48,16 @@ function validateInput(input) {
   }
 }
 
+/** @param {HTMLInputElement & HTMLSelectElement & HTMLTextAreaElement} input */
+function enhanceInput(input) {
+  input.addEventListener('blur', (event) => {
+    validateInput(event.currentTarget);
+  });
+  input.addEventListener('input', (event) => {
+    validateInput(event.currentTarget);
+  });
+}
+
 /**
  * @param {SubmitEvent} event
  */
@@ -48,12 +66,21 @@ function handleSubmit(event) {
   // @ts-ignore
   const form = event.currentTarget;
 
+  const previousController = form.__controller;
+  if (previousController) {
+    previousController.abort();
+  }
+
+  const controller = new AbortController();
+  form.__controller = controller;
+
   if (!form.checkValidity()) {
     // form.reportValidity();
     const inputs = form.querySelectorAll(FORM_CONTROLS);
     for (const input of inputs) {
       validateInput(input);
     }
+    form.querySelector(':invalid:not(fieldset)')?.focus();
     event.preventDefault();
     return;
   }
@@ -61,8 +88,11 @@ function handleSubmit(event) {
   const url = new URL(form.action);
   const formData = new FormData(form);
   const searchParameters = new URLSearchParams(formData);
+
+  /** @type {RequestInit} */
   const options = {
     method: form.method,
+    signal: controller.signal,
   };
 
   if (form.method.toLowerCase() === 'post') {
@@ -75,7 +105,9 @@ function handleSubmit(event) {
     url.search = searchParameters;
   }
 
-  fetch(url, options);
+  fetch(url, options).then(() => {
+    delete form.__controller;
+  });
   event.preventDefault();
 }
 
@@ -86,4 +118,9 @@ function handleSubmit(event) {
 export function enhanceForm(form, options = {}) {
   form.noValidate = true;
   form?.addEventListener('submit', handleSubmit);
+
+  const inputs = form.querySelectorAll(FORM_CONTROLS);
+  for (const input of inputs) {
+    enhanceInput(input);
+  }
 }
