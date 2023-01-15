@@ -33,7 +33,13 @@ onMounted(() => {
           required
           minlength="2"
           class="control__input"
+          aria-describedby="desc"
         />
+        <p id="desc">Give me a great name.</p>
+        </div>
+        <div class="control">
+          <label for="name2">Name</label>
+          <input id="name2" name="name" required class="control__input" />
       </div>
 
       <!-- <fieldset>

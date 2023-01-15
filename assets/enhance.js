@@ -5,6 +5,42 @@
 const FORM_CONTROLS = 'input,select,textarea';
 
 /**
+ * @param {HTMLInputElement} input
+ */
+function validateInput(input) {
+  const { validity } = input;
+  if (validity.valid) return;
+
+  input.id = input.id || Math.random().toString(36).slice(2);
+  const id = input.id;
+
+  input.ariaInvalid = 'true';
+  const errorContainer = document.createElement('div');
+  errorContainer.id = `${id}__errors`;
+  let descriptors = input.getAttribute('aria-describedby');
+  if (descriptors) {
+    descriptors = descriptors.split(' ');
+  } else {
+    descriptors = [];
+  }
+  descriptors = descriptors.filter((s) => s !== errorContainer.id);
+
+  const errors = [];
+  if (validity.valueMissing) {
+    errors.push('This field is required.');
+  }
+  if (errors.length) {
+    errorContainer.innerHTML = errors.join(' ');
+    input.parentElement?.after(errorContainer);
+    descriptors.push(errorContainer.id);
+  }
+
+  if (descriptors?.length) {
+    input.setAttribute('aria-describedby', descriptors.join(' '));
+  }
+}
+
+/**
  * @param {SubmitEvent} event
  */
 function handleSubmit(event) {
@@ -13,8 +49,11 @@ function handleSubmit(event) {
   const form = event.currentTarget;
 
   if (!form.checkValidity()) {
-    form.reportValidity();
-
+    // form.reportValidity();
+    const inputs = form.querySelectorAll(FORM_CONTROLS);
+    for (const input of inputs) {
+      validateInput(input);
+    }
     event.preventDefault();
     return;
   }
