@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted } from 'vue';
+import { enhanceForm } from './assets/enhance.js';
 
 const API_ENDPOINT = '';
 // const API_ENDPOINT = 'https://jsonplaceholder.typicode.com/todos/';
@@ -7,59 +8,34 @@ const API_ENDPOINT = '';
 // const API_ENDPOINT = 'https://httpstat.us/301';
 // const API_ENDPOINT = 'http://localhost:3000/api';
 
-/**
- * @param {SubmitEvent} event
- */
-function handleSubmit(event) {
-  /** @type {HTMLFormElement} */
-  // @ts-ignore
-  const form = event.currentTarget;
-
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    event.preventDefault();
-    return;
-  }
-
-  const url = new URL(form.action);
-  const formData = new FormData(form);
-  const searchParameters = new URLSearchParams(formData);
-  const options = {
-    method: form.method,
-  };
-
-  if (form.method.toLowerCase() === 'post') {
-    if (form.enctype === 'multipart/form-data') {
-      options.body = formData;
-    } else {
-      options.body = searchParameters;
-    }
-  } else {
-    url.search = searchParameters;
-  }
-
-  fetch(url, options);
-  event.preventDefault();
-}
-
 onMounted(() => {
   const form = document.querySelector('form');
 
   if (!form) return;
 
-  form.noValidate = true;
-  form?.addEventListener('submit', handleSubmit);
+  enhanceForm(form);
 });
 </script>
 
 <template>
   <main>
-    <form id="formid" method="post" :action="API_ENDPOINT" enctype="multipart/form-data">
+    <form
+      id="formid"
+      method="post"
+      :action="API_ENDPOINT"
+      enctype="multipart/form-data"
+    >
       <div class="control">
         <label for="name">Name</label>
-        <input id="name" name="name" required class="control__input" />
+        <input
+          id="name"
+          name="name"
+          required
+          minlength="2"
+          class="control__input"
+        />
       </div>
-    
+
       <!-- <fieldset>
                                                                                                                                                                                             <legend>What's your fave frontend language</legend>
                                                                                                                                                                                             <div class="cards">
