@@ -296,7 +296,7 @@ export function enhanceForm(form, options = {}) {
     }
 
     // 1. Enhance submission with fetch
-    const url = new URL(form.action || window.location.href);
+    const url = new URL(form.action);
     const formData = new FormData(form);
     const searchParameters = new URLSearchParams(formData);
     /** @type {Parameters<enhancedFetch>[1]} */
